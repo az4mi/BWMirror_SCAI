@@ -1,0 +1,46 @@
+16.3.2017 13:46:28 7844 Logging started
+16.3.2017 13:46:28 7844 Begin Startup
+16.3.2017 13:46:28 7844 Chaosauncher 0.5.4.4 on NT 6.1.7600  at D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Chaoslauncher.exe
+16.3.2017 13:46:28 7844 Load Settings
+16.3.2017 13:46:28 7844 GamePath: D:\Games\Starcraft No Install\
+16.3.2017 13:46:28 7844 Load Plugins
+16.3.2017 13:46:28 7844 AdvLoaderPluginPath: \Plugins\
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\iccscbn.icc
+16.3.2017 13:46:28 7844 Plugin loaded ICCup
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\APMAlert.bwl
+16.3.2017 13:46:28 7844 Plugin loaded APMAlert (1.16.1)
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\BWAPI_PluginInjector.bwl
+16.3.2017 13:46:28 7844 Plugin loaded BWAPI 4.1.2 Injector [RELEASE]
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\Chaosplugin.bwl
+16.3.2017 13:46:28 7844 Plugin loaded Chaosplugin for 1.16.1
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\LatencyChanger.bwl
+16.3.2017 13:46:28 7844 Plugin loaded LatencyChanger for 1.16.1
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\repfix.bwl
+16.3.2017 13:46:28 7844 Plugin loaded RepFix
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\RWAPlayer.bwl
+16.3.2017 13:46:28 7844 Plugin loaded RWAPlayer (1.16.1)
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\RWARecorder.bwl
+16.3.2017 13:46:28 7844 Plugin loaded RWARecorder (1.16.1)
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\Stormplugin.bwl
+16.3.2017 13:46:28 7844 Plugin loaded Stormplugin for 1.16.1
+16.3.2017 13:46:28 7844 Loading BWL4-Plugin D:\PROJECTS\JAVA\BWMirror_Starcraft.ScoutAI\BWAPI\Chaoslauncher\Plugins\wmode.bwl
+16.3.2017 13:46:29 7844 Plugin loaded W-MODE 1.02
+16.3.2017 13:46:29 7844 Load Tools
+16.3.2017 13:46:29 7844 Init GUI
+16.3.2017 13:46:29 7844 Get Starcraftversions
+16.3.2017 13:46:29 7844 Init complete
+16.3.2017 13:46:43 7844 Startbutton
+16.3.2017 13:46:43 7844 Starting Game Starcraft 1.16.1 D:\Games\Starcraft No Install\StarCraft.exe
+16.3.2017 13:46:43 7844 BWAPI 4.1.2 Injector [RELEASE] Version  Compatible
+16.3.2017 13:46:43 7844 W-MODE 1.02 Version 1.0.2 Compatible
+16.3.2017 13:46:43 7844 Obtained DebugPrivilege
+16.3.2017 13:46:43 7844 CreateProcess
+16.3.2017 13:46:46 7844 Call ScSuspended for all active Plugins
+16.3.2017 13:46:46 7844 ApplyPatchSuspended for BWAPI 4.1.2 Injector [RELEASE]
+16.3.2017 13:46:47 7844 ApplyPatchSuspended for W-MODE 1.02
+16.3.2017 13:46:47 7844 ResumeThread
+16.3.2017 13:46:47 7844 WaitForInputIdle
+16.3.2017 13:46:47 7844 Call ScWindowCreated for all active Plugins
+16.3.2017 13:46:47 7844 ApplyPatch for BWAPI 4.1.2 Injector [RELEASE]
+16.3.2017 13:46:47 7844 ApplyPatch for W-MODE 1.02
+16.3.2017 13:46:47 7844 Starting Starcraft completed
