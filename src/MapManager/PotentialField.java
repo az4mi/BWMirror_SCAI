@@ -40,6 +40,10 @@ public class PotentialField {
      */
     private double heat;
 
+    private PotentialField needleTip = null;
+
+
+
     private Game game;
 
 
@@ -89,6 +93,35 @@ public class PotentialField {
         this.column=-1;
         game=pGame;
     }
+
+    public PotentialField(Game pGame, Unit pUnit,boolean needle) {
+        this.priority=0;
+        this.X=pUnit.getPosition().getX();
+        this.Y=pUnit.getPosition().getY();
+        this.radius=pUnit.getType().sightRange();
+        this.heat=0;
+        this.id=pUnit.getID();
+        this.unitType=pUnit.getType();
+        this.row=-1;
+        this.column=-1;
+        game=pGame;
+        if(needle){
+            needleTip = new PotentialField(game,pUnit,radius/2);
+        }
+    }
+
+    public PotentialField(Game pGame, Unit unit,double radius) {
+        this.priority=0;
+        this.X=unit.getPosition().getX();
+        this.Y=unit.getPosition().getY();
+        this.radius=radius;
+        this.heat=0;
+        this.id=-1;
+        this.row=-1;
+        this.column=-1;
+        game=pGame;
+    }
+
 
     public PotentialField(Game pGame, int X, int Y, int radius, double priority) {
         this.priority=priority;
@@ -175,21 +208,25 @@ public class PotentialField {
      * @return true if atleast one of its corner is visible
      */
     public boolean isVisible(Game game){
-        /*TilePosition upLeft = new TilePosition((int)(row*GRIDTILESIZE),(int)(column*GRIDTILESIZE));
+
+        TilePosition upLeft = new TilePosition((int)(row*GRIDTILESIZE),(int)(column*GRIDTILESIZE));
         TilePosition upRight = new TilePosition((int)(row*GRIDTILESIZE),
                 (int)(column*GRIDTILESIZE)+GRIDTILESIZE-1);
         TilePosition downLeft = new TilePosition((int)(row*GRIDTILESIZE)+GRIDTILESIZE-1,
                 (int)(column*GRIDTILESIZE));
         TilePosition downRight = new TilePosition((int)(row*GRIDTILESIZE)+GRIDTILESIZE-1,
-                (int)(column*GRIDTILESIZE)+GRIDTILESIZE-1);*/
+                (int)(column*GRIDTILESIZE)+GRIDTILESIZE-1);
 
+        return game.isVisible(upLeft) && game.isVisible(upRight) &&
+                game.isVisible(downLeft) && game.isVisible(downRight) ;
+
+/*
         TilePosition middle = new TilePosition((int)(row*GRIDTILESIZE)+GRIDTILESIZE/2,
                 (int)(column*GRIDTILESIZE)+GRIDTILESIZE/2);
 
         return game.isVisible(middle); // checks tile in the middle, the other ones ale more precise
+*/
 
-        /*return game.isVisible(upLeft) || game.isVisible(upRight) ||
-                game.isVisible(downLeft) || game.isVisible(downRight) || game.isVisible(middle);*/
 
     }
     public boolean isUnitInRange(Unit pUnit) {
@@ -204,9 +241,15 @@ public class PotentialField {
         Position pos=new Position(X,Y);
         if(pos.getDistance(pPosition)<=radius) {
             return true;
+        }else{
+            if(isCombined()){
+                return needleTip.isPositionInRange(pPosition);
+            }
         }
+
         return false;
     }
+
 
     public double getRangeLengthInPercent(Position pPosition) {
         double distance=pPosition.getDistance(new Position(X,Y));
@@ -233,8 +276,18 @@ public class PotentialField {
     public void showGraphicsCircular(Color pColor) {
         game.drawDotMap(this.getPosition(),pColor);
         game.drawCircleMap(this.getPosition(),(int)radius,pColor);
-        game.drawTextMap(X-10,Y-20,String.format("%.3g%n", heat));
-        game.drawTextMap(X-10,Y-40,Boolean.toString(isVisible(game.getAllUnits())));
+//        game.drawTextMap(X-10,Y-20,String.format("%.3g%n", heat));
+//        game.drawTextMap(X-10,Y-40,Boolean.toString(isVisible(game.getAllUnits())));
+        if(needleTip != null) game.drawCircleMap(needleTip.getPosition(),(int)needleTip.getRadius(),pColor);
+    }
+
+    public PotentialField getNeedleTip() {
+        return needleTip;
+    }
+
+
+    public boolean isCombined(){
+        return needleTip != null;
     }
 
     /**
@@ -253,6 +306,8 @@ public class PotentialField {
 //    }
 
     /* ------------------- Getters and Setters ------------------- */
+
+
 
     public Position getPosition() {
         return new Position(X,Y);
@@ -338,4 +393,25 @@ public class PotentialField {
     }
 
 
+    public void refreshPosition(Unit pUnit) {
+        Position p = pUnit.getPosition();
+        this.X = p.getX();
+        this.Y = p.getY();
+        setNeedleTip(pUnit);
+    }
+
+    public void setNeedleTip(Unit pUnit){
+        if(needleTip == null)return;
+        double angle = pUnit.getAngle();
+
+        double needleX = X + radius * Math.cos(angle);
+        double needleY = Y + radius * Math.sin(angle);
+        needleTip.setX((int) needleX);
+        needleTip.setY((int) needleY);
+    }
+
+    public void setPosition(Position pos){
+        this.X = pos.getX();
+        this.Y = pos.getY();
+    }
 }

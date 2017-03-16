@@ -1,5 +1,7 @@
 package MODaStar;
 
+import MapManager.Block;
+
 import java.util.Stack;
 
 /**

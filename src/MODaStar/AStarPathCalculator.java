@@ -1,6 +1,7 @@
 package MODaStar;
 
 import MapManager.*;
+import MapManager.MapLayers.MapLayersManager;
 import bwapi.Color;
 import bwapi.Game;
 import bwapi.Position;
@@ -12,7 +13,7 @@ import java.util.ArrayList;
  */
 public class AStarPathCalculator implements Runnable {
 
-    public static boolean DEBUG=false;
+    public static boolean DEBUG=true;
 
     private Thread t;
 
@@ -22,7 +23,7 @@ public class AStarPathCalculator implements Runnable {
 
     private boolean airPath;
 
-    private GridMap gridMap;
+    private GridBasedMap gridMap;
 
     private ArrayList<Block> blockPathArray=null;
 
@@ -36,13 +37,14 @@ public class AStarPathCalculator implements Runnable {
 
     public Color pathColor;
 
-    public AStarPathCalculator(Position pStartPosition, Position pDestinationPosition, int pStartingHealth, int pLevelOfSafety, boolean pAirPath, GridMap pGridMap, Game pGame, Color pColor) {
+    public AStarPathCalculator(Position pStartPosition, Position pDestinationPosition, int pStartingHealth,
+                               int pLevelOfSafety, boolean pAirPath, GridBasedMap pGridMap, Game pGame, Color pColor) {
         this.startPosition=pStartPosition;
         this.destinationPosition=pDestinationPosition;
         this.startingHealth=pStartingHealth;
         this.levelOfSafety=pLevelOfSafety;
         this.airPath=pAirPath;
-        this.gridMap=new GridMap(pGridMap,pGame);
+        this.gridMap=new GridBasedMap(pGridMap,pGame);
         this.finished=false;
         this.pathColor=pColor;
     }
@@ -195,8 +197,8 @@ public class AStarPathCalculator implements Runnable {
             if(pAirPath) {
                 if(!pNeighbourBlock.hasParent()) {
                     if(pNeighbourBlock.isAirDamage()) {
-                        if(pActualBlock.getHealth()-pNeighbourBlock.getDamage()>0) {
-                            pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getDamage()));
+                        if(pActualBlock.getHealth()-pNeighbourBlock.getValue()>0) {
+                            pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getValue()));
                             pNeighbourBlock.setParent(pActualBlock);
                             pNeighbourBlock.setDistance_value(newDistance);
                             pNeighbourBlock.setDestination_distance(getManhattanDistance(pNeighbourBlock, pDestinationBlock));
@@ -220,11 +222,11 @@ public class AStarPathCalculator implements Runnable {
 
                 } else {
                     if(pNeighbourBlock.isAirDamage()) {
-                        if((newDistance<pNeighbourBlock.getDistance_value()&&pActualBlock.getHealth()-pNeighbourBlock.getDamage()>0)||(pActualBlock.getHealth()-pNeighbourBlock.getDamage()>pNeighbourBlock.getHealth()&&newDistance<=pNeighbourBlock.getDistance_value())) {
+                        if((newDistance<pNeighbourBlock.getDistance_value()&&pActualBlock.getHealth()-pNeighbourBlock.getValue()>0)||(pActualBlock.getHealth()-pNeighbourBlock.getValue()>pNeighbourBlock.getHealth()&&newDistance<=pNeighbourBlock.getDistance_value())) {
 
                             pBinaryTree.delete(pNeighbourBlock);
 
-                            pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getDamage()));
+                            pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getValue()));
                             pNeighbourBlock.setDistance_value(newDistance);
                             pNeighbourBlock.setDestination_distance(getManhattanDistance(pNeighbourBlock, pDestinationBlock));
                             pNeighbourBlock.setFValue(pNeighbourBlock.getDistance_value() + pNeighbourBlock.getDestination_distance() - (pNeighbourBlock.getHealth() * constant_K));
@@ -259,8 +261,8 @@ public class AStarPathCalculator implements Runnable {
                 if(pNeighbourBlock.isAccessibleByGround()) {
                     if(!pNeighbourBlock.hasParent()) {
                         if(pNeighbourBlock.isGroundDamage()) {
-                            if(pActualBlock.getHealth()-pNeighbourBlock.getDamage()>0) {
-                                pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getDamage()));
+                            if(pActualBlock.getHealth()-pNeighbourBlock.getValue()>0) {
+                                pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getValue()));
                                 pNeighbourBlock.setParent(pActualBlock);
                                 pNeighbourBlock.setDistance_value(newDistance);
                                 pNeighbourBlock.setDestination_distance(getManhattanDistance(pNeighbourBlock, pDestinationBlock));
@@ -284,11 +286,11 @@ public class AStarPathCalculator implements Runnable {
 
                     } else {
                         if(pNeighbourBlock.isGroundDamage()) {
-                            if((newDistance<pNeighbourBlock.getDistance_value()&&pActualBlock.getHealth()-pNeighbourBlock.getDamage()>0)||(pActualBlock.getHealth()-pNeighbourBlock.getDamage()>pNeighbourBlock.getHealth()&&newDistance<=pNeighbourBlock.getDistance_value())) {
+                            if((newDistance<pNeighbourBlock.getDistance_value()&&pActualBlock.getHealth()-pNeighbourBlock.getValue()>0)||(pActualBlock.getHealth()-pNeighbourBlock.getValue()>pNeighbourBlock.getHealth()&&newDistance<=pNeighbourBlock.getDistance_value())) {
 
                                 pBinaryTree.delete(pNeighbourBlock);
 
-                                pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getDamage()));
+                                pNeighbourBlock.setHealth((int) (pActualBlock.getHealth() - pNeighbourBlock.getValue()));
                                 pNeighbourBlock.setDistance_value(newDistance);
                                 pNeighbourBlock.setDestination_distance(getManhattanDistance(pNeighbourBlock, pDestinationBlock));
                                 pNeighbourBlock.setFValue(pNeighbourBlock.getDistance_value() + pNeighbourBlock.getDestination_distance() - (pNeighbourBlock.getHealth() * constant_K));
@@ -334,7 +336,7 @@ public class AStarPathCalculator implements Runnable {
 
         int manhattanDistance=Math.abs(actualRow - destinationRow)+Math.abs(actualColumn - destinationColumn);
 
-        return manhattanDistance*MapManager.GRIDEDGESIZE;
+        return manhattanDistance* MapLayersManager.DMGGRIDSIZE;
     }
 
     public ArrayList<Block> getBlockPathArray() {
@@ -348,4 +350,6 @@ public class AStarPathCalculator implements Runnable {
     public void setDestinationPosition(Position destinationPosition) {
         this.destinationPosition = destinationPosition;
     }
+
+
 }

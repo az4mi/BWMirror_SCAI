@@ -6,9 +6,6 @@ import bwapi.Unit;
 
 import java.util.Random;
 
-/**
- * Created by Chudjak Kristián on 05.01.2017.
- */
 public class Vector2DMath {
 
     static private Random random = new Random();

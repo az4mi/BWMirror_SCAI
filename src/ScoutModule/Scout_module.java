@@ -16,27 +16,33 @@ public class Scout_module {
 
     public static boolean DEBUG=false;
 
-    public static final int SAFETY_LEVEL=2;
+    public static final int SAFETY_LEVEL=3;
 
-    public static final int MAP_REFRESH_FRAME_COUNT=30;
+    public static final int MAP_REFRESH_FRAME_COUNT=20;
 
-    public static final int UNIT_DANGERCHECK_FRAME_COUNT=33;
+    public static final int UNIT_DANGERCHECK_FRAME_COUNT=22;
 
     private Game game;
     private UnitManager unitManager;
     private MapManager mapManager;
     private ActionManager actionManager;
 
+    private QExecutor qexecutor;
+
     public Scout_module(Game pGame) {
         game=pGame;
         unitManager=new UnitManager(game);
         mapManager=new MapManager(game);
         actionManager=new ActionManager(mapManager,game);
+
+        qexecutor=new QExecutor(this);
     }
 
     public void onStart() {
         initializeModules();
+        testInit();
     }
+
 
     public void onFrame() {
 
@@ -53,10 +59,12 @@ public class Scout_module {
 
         manageAll();
         drawAll();
+        qexecutor.onFrame();
     }
 
     public void initializeModules() {
         mapManager.initializeAll();
+        qexecutor.initializeAll();
     }
 
     public void TEST_initializeAll() {
@@ -76,11 +84,41 @@ public class Scout_module {
     public void drawAll() {
         mapManager.drawAll();
         unitManager.drawAll();
+//        qexecutor.drawAll();
     }
 
     public void manageAll() {
         mapManager.manageAll(game);
         unitManager.manageAll(mapManager);
+//        testMethods();
+    }
+
+    private void testInit() {
+        for (Unit u:
+                game.self().getUnits()) {
+                if(!u.getType().isBuilding()) {
+                    ScoutingUnit sUnit = new ScoutingUnit(u);
+                    unitManager.getScoutingUnits().add(sUnit);
+                    unitManager.addScoutingUnit(sUnit);
+                    System.out.println("added: "+u.getPosition());
+                }else{
+                    System.out.println("not added: "+u.getPosition());
+                }
+
+        }
+    }
+
+
+    private static Position testPosition = new Position(1500,1600);
+
+    private void testMethods() {
+        for (ScoutingUnit sUnit :
+                unitManager.getScoutingUnits()) {
+            getActionManager().scoutPosition(testPosition,sUnit);
+            game.drawTextScreen(10,10,"leghth: "+sUnit.getPath().size()+" Danger: "+mapManager.calculateDangerForPath(sUnit.getUnit(),sUnit.getPath()));
+        }
+
+
     }
 
     //Test public
@@ -133,4 +171,11 @@ public class Scout_module {
         this.actionManager = actionManager;
     }
 
+    public QExecutor getQexecutor() {
+        return qexecutor;
+    }
+
+    public void setQexecutor(QExecutor qexecutor) {
+        this.qexecutor = qexecutor;
+    }
 }

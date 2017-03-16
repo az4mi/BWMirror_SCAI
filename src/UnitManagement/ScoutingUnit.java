@@ -1,7 +1,6 @@
 package UnitManagement;
 
 import MODaStar.AStarPathCalculator;
-import MODaStar.Block;
 import MapManager.*;
 import ScoutModule.Scout_module;
 import bwapi.Color;
@@ -126,7 +125,7 @@ public class ScoutingUnit {
         if(unit.getPosition().getDistance(pUnit.getPosition())<unit.getType().sightRange()+pUnit.getType().sightRange()) {
             pMapManager.refreshMap(pGame);
             for(Block b:path) {
-                b.setDamage(pMapManager.getaStarModule().getGridMap().getBlockMap()[b.getRow()][b.getColumn()].getDamage());
+                b.setValue(pMapManager.getaStarModule().getGridMap().getBlockMap()[b.getRow()][b.getColumn()].getValue());
             }
             if(unit.getType().isFlyer()) {
                 if(pUnit.getType().groundWeapon().targetsAir()||pUnit.getType().airWeapon().targetsAir()) {

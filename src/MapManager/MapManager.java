@@ -2,13 +2,9 @@ package MapManager;
 
 import MODaStar.AStarModule;
 import MODaStar.AStarPathCalculator;
-import MODaStar.Block;
-import MODaStar.GridMap;
+import MapManager.MapLayers.MapLayersManager;
 import ScoutModule.Scout_module;
 import bwapi.*;
-import bwta.BWTA;
-import bwta.BaseLocation;
-import bwta.Chokepoint;
 
 import java.awt.geom.Point2D;
 import java.util.ArrayList;
@@ -22,7 +18,8 @@ public class MapManager {
     /**
      * Size of the edge of grid block
      */
-    public static final int GRIDEDGESIZE=18; //18
+
+    //TODO astar cudne chodi
 
     private AStarModule aStarModule;
 
@@ -61,6 +58,9 @@ public class MapManager {
 
     private Game game;
 
+    private GridBasedMap gridMap;
+
+    private MapLayersManager layersManager;
     //private GraphicsExtended graphicsEx;
 
 
@@ -76,8 +76,13 @@ public class MapManager {
         retreatFields=new ArrayList<>();
         scoutingAreas=new ArrayList<>();
         game=pGame;
-        aStarModule=new AStarModule(new GridMap(MapManager.GRIDEDGESIZE,game));
+        gridMap = new GridBasedMap(MapLayersManager.DMGGRIDSIZE,game);
+//        aStarModule=new AStarModule(new GridMap(MapLayersManager.DMGGRIDSIZE,game));
+        aStarModule=new AStarModule(gridMap);
         myBasePosition=pGame.self().getStartLocation().toPosition();//BWTA.getStartLocation(game.self()).getPosition();
+
+        testPotField = new PotentialField(game,300,500,150);
+        layersManager = new MapLayersManager(game);
     }
 
     public MapManager(Game pGame, AStarModule pAStarModule, HeatMap pHeatMap) {
@@ -89,6 +94,7 @@ public class MapManager {
         heatMap=pHeatMap;
         game=pGame;
         myBasePosition=pGame.self().getStartLocation().toPosition();//BWTA.getStartLocation(game.self()).getPosition();
+        layersManager = new MapLayersManager(game);
     }
 
     /**
@@ -103,6 +109,7 @@ public class MapManager {
         retreatFields=new ArrayList<>();
         game=pGame;
         myBasePosition=pGame.self().getStartLocation().toPosition();//BWTA.getStartLocation(game.self()).getPosition();
+        layersManager = new MapLayersManager(game);
     }
 
 
@@ -255,11 +262,37 @@ public class MapManager {
         refreshDangerField(game);
         manageInitializationBaseArea(game);
         manageDangerFields(game);
+        manageGridMap();
+        layersManager.manage();
+    }
+
+    PotentialField testPotField;
+
+    private void manageGridMap() {
+        if(game.getFrameCount()%Scout_module.MAP_REFRESH_FRAME_COUNT==0) {
+            long time = System.currentTimeMillis();
+            int units = 0;
+            gridMap.refreshStart();
+//        gridMap.refreshGridMap(testPotField);
+            for (PotentialField pf :
+                    dangerFields) {
+                gridMap.refreshGridMapNonRecursive(pf);
+                units ++;
+            }
+            if((units >= 5 && units <= 15) || (units >= 90 && units <= 110) || (units >= 45 && units <= 55) || units > 150)
+                System.out.println("units: "+units+"   CAS: "+(System.currentTimeMillis() - time));
+        }
     }
 
     public void refreshDangerField(Game pGame) {
-        if(pGame.getFrameCount()%Scout_module.MAP_REFRESH_FRAME_COUNT==0) {
+        if(game.getFrameCount()%Scout_module.MAP_REFRESH_FRAME_COUNT==0) {
+            //        if(pGame.getFrameCount()%Scout_module.MAP_REFRESH_FRAME_COUNT==0) {
+            //            refreshMap(pGame);
+            //        }
+            long start = System.currentTimeMillis();
             refreshMap(pGame);
+            //        System.out.println("TIME: "+(System.currentTimeMillis() - start));
+            //        System.out.println("field: "+dangerFields.size());
         }
     }
 
@@ -268,36 +301,38 @@ public class MapManager {
             if (pUnit.getPlayer().isEnemy(game.self()) && pUnit.getType().canAttack()&&!pUnit.getType().isWorker()) {
                 PotentialField p = getDangerFieldByID(pUnit.getID());
                 if (p != null) {
-                    if(p.getX()!=pUnit.getPosition().getX()&&p.getY()!=pUnit.getPosition().getY()) {
-                        aStarModule.getGridMap().refreshGridMap(p);
-                        p.setX(pUnit.getPosition().getX());
-                        p.setY(pUnit.getPosition().getY());
-                        aStarModule.getGridMap().updateGridMap(p);
-                    }
+//                    if(p.getX()!=pUnit.getPosition().getX()&&p.getY()!=pUnit.getPosition().getY()) {
+//                        aStarModule.getGridMap().refreshGridMap(p);
+//                        p.setX(pUnit.getPosition().getX());
+//                        p.setY(pUnit.getPosition().getY());
+                        p.refreshPosition(pUnit);
+//                        aStarModule.getGridMap().updateGridMap(p);
+//                    }
                 } else {
-                    PotentialField pf = new PotentialField(pGame, pUnit);
+                    PotentialField pf = new PotentialField(pGame, pUnit, true);
                     dangerFields.add(pf);
-                    aStarModule.getGridMap().updateGridMap(pf);
+//                    aStarModule.getGridMap().updateGridMap(pf);
                 }
             }
         }
-
 
         for(PotentialField pf:dangerFields) {
 
             if(pf.isVisible(game.getAllUnits())) {
                 if(pGame.enemy().allUnitCount()<1) {
-                    aStarModule.getGridMap().refreshGridMap(pf);
+//                    aStarModule.getGridMap().refreshGridMap(pf);
                     dangerFields.remove(pf);
                 }
                 for(Unit u:game.enemy().getUnits()) {
                     if(u.getID()==pf.getId()) {
                         if(!u.exists()||!u.isVisible()) {
-                            aStarModule.getGridMap().refreshGridMap(pf);
+//                            aStarModule.getGridMap().refreshGridMap(pf);
                             dangerFields.remove(pf);
                         }
                     }
                 }
+            }else{
+                dangerFields.remove(pf);
             }
         }
     }
@@ -319,6 +354,9 @@ public class MapManager {
             staticPathCalculator=null;
         }
     }
+
+
+
 
     public void manageHeatMap(Game game) {
         heatMap.heatManagement(game);
@@ -363,6 +401,56 @@ public class MapManager {
         if(expansionPositions.contains(pf)) {
             expansionPositions.remove(pf);
         }
+    }
+
+    public int calculateDangerForPath(Unit scout, ArrayList<Block> path){
+        int danger = 0;
+        double scoutSpeed = unitSpeed(scout);
+
+        for (Block block :
+                path) {
+            danger += block.getValue();
+            for (Unit unit :
+                    game.enemy().getUnits()) {
+                if (unit.getType().canAttack()){
+                    if(canUnitComeToABlock(block,unit, (int) (block.getDestination_distance()/scoutSpeed))){
+                        danger += unit.getPlayer().damage(unit.getType().groundWeapon());
+                        System.out.println("Enemy on pos. "+unit.getPosition()+" can attack block: "+block.getPosition() +
+                                " block dest: "+block.getDestination_distance());
+                        // TODO increase complexity of the danger calculation
+                    }
+                }
+            }
+        }
+
+        return danger;
+    }
+
+    public boolean isRanged(Unit unit){
+        return unit.getType().groundWeapon().maxRange() > 0;
+    }
+
+    /**
+     * retruns true if units can come to a block in stated frames
+     * @param block
+     * @param unit
+     * @param frames number of a block in a path
+     * @return
+     */
+    public boolean canUnitComeToABlock(Block block, Unit unit, int frames){
+        double unitSpeed = unitSpeed(unit);
+        double distance = distance(block.getPosition(),unit.getPosition());
+        double framesNeeded = distance / unitSpeed; // how many drames unit needs to travel the distance
+        System.out.println("unit speed: "+unitSpeed+" distance: "+distance+" frameNeeded "+ framesNeeded+" frames: "+frames);
+        return framesNeeded <= frames; // if units needs more than 
+    }
+
+    public double unitSpeed(Unit unit){
+        return unit.getPlayer().topSpeed(unit.getType());
+    }
+
+    public double distance(Position p1,Position p2){
+        return Point2D.distance(p1.getX(),p1.getY(),p2.getX(),p2.getY());
     }
 
 //    /**
@@ -441,53 +529,6 @@ public class MapManager {
 
     /* ------------------- other methods ------------------- */
 
-    public int calculateDangerForPath(Unit scout, ArrayList<Block> path){
-        int danger = 0;
-        double scoutSpeed = unitSpeed(scout);
-
-        for (Block block :
-                path) {
-            danger += block.getDamage();
-            for (Unit unit :
-                    game.enemy().getUnits()) {
-                if (unit.getType().canAttack() && isRanged(unit)){
-                    if(canUnitComeToABlock(block,unit, (int) (block.getDestination_distance()/scoutSpeed))){
-                        danger += unit.getPlayer().damage(unit.getType().groundWeapon());
-                        // TODO increase complexity of the danger calculation
-                    }
-                }
-            }
-        }
-
-        return danger;
-    }
-
-    public boolean isRanged(Unit unit){
-        return unit.getType().groundWeapon().maxRange() > 0;
-    }
-
-    /**
-     * retruns true if units can come to a block in stated frames
-     * @param block
-     * @param unit
-     * @param frames number of a block in a path
-     * @return
-     */
-    public boolean canUnitComeToABlock(Block block, Unit unit, int frames){
-        double unitSpeed = unitSpeed(unit);
-        double distance = distance(block.getPosition(),unit.getPosition());
-        double framesNeeded = distance / unitSpeed; // how many drames unit needs to travel the distance
-        return framesNeeded <= frames; // if units needs more than
-    }
-
-    public double unitSpeed(Unit unit){
-        return unit.getPlayer().topSpeed(unit.getType());
-    }
-
-    public double distance(Position p1,Position p2){
-        return Point2D.distance(p1.getX(),p1.getY(),p2.getX(),p2.getY());
-    }
-
     public boolean containsPotentialFieldWithID(int pID) {
         for(PotentialField pf:dangerFields) {
             if(pf.getId()==pID) {
@@ -503,6 +544,16 @@ public class MapManager {
 
     public AStarPathCalculator buildPath(Unit pUnit,Position pStart, Position pDestination, int pLevelOfSafety, boolean pAirPath, Game game, Color pColor) {
         return aStarModule.buildPath(pStart, pDestination, pUnit.getHitPoints(), pLevelOfSafety, pAirPath, game,pColor);
+    }
+
+    public int calculateFrames(Unit unit,Position posA,Position posB){
+        GridBasedMap gridMap = new GridBasedMap(MapLayersManager.DMGGRIDSIZE,game);
+        AStarPathCalculator aStarPathCalc = new AStarPathCalculator(posA,posB,unit.getHitPoints(),1,unit.getType().isFlyer(),gridMap,game,Color.White);
+        aStarPathCalc.run();
+        ArrayList<Block> path = aStarPathCalc.getBlockPathArray();
+        if(path == null) return Integer.MAX_VALUE;
+        double distance = path.get(1).getDistance_value();
+        return (int) (distance / unit.getPlayer().topSpeed(unit.getType())); // dlzka trasy / rychlost jednotky za 1 frame
     }
 
     /**
@@ -547,11 +598,31 @@ public class MapManager {
     /* ------------------- Drawing functions ------------------- */
 
     public void drawAll() {
-        drawBasePosition();
-        drawExpansionPositions();
-        //drawHeatMap(game);
+
+        layersManager.draw();
+
+        gridMap.drawGridMap(Color.Red,game);
+//        for(Unit u: game.getAllUnits()) {
+//            if(u.isSelected()) {
+//                game.drawTextMap(u.getPosition(),""+u.getID());
+//                game.drawTextMap(u.getX(),u.getY()+50,""+u.getPosition().toString());
+//            }
+//        }
+
+//        drawExpansionPositions();
+//        testPotField.showGraphicsCircular(Color.Blue);
+
+
+//        drawBasePosition();
+//
+//        gridMap.drawDangerGrid(Color.White,game);
+//        aStarModule.getGridMap().drawDangerGrid(Color.Red,game);
+//        aStarModule.drawAll(game.getAllUnits(),game);
+//        drawHeatMap(game);
         drawDangerFields();
-        drawDangerGrid();
+//        drawDangerGrid();
+
+
     }
 
     private void drawHeatMap(Game game) {
@@ -583,6 +654,11 @@ public class MapManager {
         for(PotentialField pf:dangerFields) {
             pf.showGraphicsCircular(Color.Orange);
         }
+    }
+
+
+    public void addLayersMethod() {
+        layersManager.testMethod();
     }
 
     public void drawDangerGrid() {
@@ -652,4 +728,6 @@ public class MapManager {
     public void setRetreatFields(ArrayList<PotentialField> retreatFields) {
         this.retreatFields = retreatFields;
     }
+
+
 }

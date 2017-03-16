@@ -1,5 +1,7 @@
 package MODaStar;
 
+import MapManager.Block;
+import MapManager.GridBasedMap;
 import bwapi.*;
 
 import java.util.List;
@@ -11,7 +13,7 @@ import java.util.List;
  */
 public class AStarModule {
 
-    private GridMap gridMap;
+    private GridBasedMap gridMap;
 
     /* ------------------- Constructors ------------------- */
 
@@ -19,7 +21,7 @@ public class AStarModule {
 
     }
 
-    public AStarModule(GridMap pGridMap) {
+    public AStarModule(GridBasedMap pGridMap) {
         gridMap=pGridMap;
     }
 
@@ -79,7 +81,7 @@ public class AStarModule {
 
     /* ------------------- Getters and Setters ------------------- */
 
-    public GridMap getGridMap() {
+    public GridBasedMap getGridMap() {
         return gridMap;
     }
 

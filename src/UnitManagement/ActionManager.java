@@ -56,7 +56,7 @@ public class ActionManager {
     public void returnHome(ScoutingUnit pScoutingUnit) {
         Position base=mapManager.getMyBasePosition();
 
-        pScoutingUnit.scout(mapManager.buildPath(pScoutingUnit.getUnit(),base, pScoutingUnit.getSafety_level(), pScoutingUnit.getUnit().getType().isFlyer(),game, Color.Yellow),false);
+        pScoutingUnit.scout(mapManager.buildPath(pScoutingUnit.getUnit(),base, pScoutingUnit.getSafety_level(), pScoutingUnit.getUnit().getType().isFlyer(),game, Color.Blue),false);
     }
 
     public void returnHome_selectedUnits(List<ScoutingUnit> pScoutingUnits) {
@@ -68,7 +68,8 @@ public class ActionManager {
     }
 
     public void scoutPosition(Position pPosition, ScoutingUnit pScoutingUnit) {
-        AStarPathCalculator calc=mapManager.buildPath(pScoutingUnit.getUnit(),pPosition,pScoutingUnit.getSafety_level(),pScoutingUnit.getUnit().isFlying(),game,Color.Yellow);
+        AStarPathCalculator calc=mapManager.buildPath(pScoutingUnit.getUnit(),pPosition,pScoutingUnit.getSafety_level(),pScoutingUnit.getUnit().isFlying(),game,Color.Teal);
+
         pScoutingUnit.scout(calc,false);
     }
 

@@ -1,8 +1,5 @@
 package MapManager;
 
-/**
- * Created by Chudjak Kristián on 05.01.2017.
- */
 
 import bwapi.Game;
 import bwapi.Position;

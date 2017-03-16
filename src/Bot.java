@@ -1,6 +1,6 @@
-import MODQlearning.*;
 import ScoutModule.Scout_module;
 import bwapi.*;
+import bwta.BWTA;
 
 /**
  * Created by Silent1 on 25.10.2016.
@@ -13,7 +13,6 @@ public class Bot extends DefaultBWListener {
 
     Scout_module scout;
     ConsoleHandler consoleHandler;
-    QExecutor qexecutor;
 
     public static void main(String[] args) {
         new Bot().run();
@@ -41,15 +40,13 @@ public class Bot extends DefaultBWListener {
             BWTA.analyze();
             System.out.println("BWTA scan complete !");
         */
-
         scout=new Scout_module(game);
         scout.onStart();
-        consoleHandler=new ConsoleHandler(scout);
-        qexecutor=new QExecutor(scout);
-        qexecutor.initializeAll();
+        consoleHandler=new ConsoleHandler(scout,scout.getMapManager());
 
-        game.setLocalSpeed(10);
+        game.setLocalSpeed(30);
         game.enableFlag(1);
+
 
         System.out.println("ScoutAI bot working.");
     }
@@ -62,15 +59,14 @@ public class Bot extends DefaultBWListener {
     @Override
     public void onFrame() {
         super.onFrame();
+
         scout.onFrame();
-        qexecutor.onFrame();
-        qexecutor.drawAll();
-        qexecutor.showAll();
     }
 
     @Override
     public void onSendText(String s) {
         super.onSendText(s);
+
         consoleHandler.messageHandler(s);
     }
 
@@ -92,9 +88,6 @@ public class Bot extends DefaultBWListener {
     @Override
     public void onUnitDiscover(Unit unit) {
         super.onUnitDiscover(unit);
-
-        //ToDo - implement into unitManager manageAll()
-        scout.getUnitManager().manageDetection(unit,scout.getMapManager());
     }
 
     @Override
