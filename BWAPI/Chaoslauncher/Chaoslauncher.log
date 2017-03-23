@@ -44,3 +44,19 @@
 16.3.2017 13:46:47 7844 ApplyPatch for BWAPI 4.1.2 Injector [RELEASE]
 16.3.2017 13:46:47 7844 ApplyPatch for W-MODE 1.02
 16.3.2017 13:46:47 7844 Starting Starcraft completed
+23.03.2017 10:28:07 3948 Startbutton
+23.03.2017 10:28:07 3948 Starting Game Starcraft 1.16.1 D:\Installs\Games_inst\Starcraft No Install\StarCraft.exe
+23.03.2017 10:28:07 3948 BWAPI 4.1.2 Injector [RELEASE] Version  Compatible
+23.03.2017 10:28:07 3948 W-MODE 1.02 Version 1.0.2 Compatible
+23.03.2017 10:28:07 3948 Could not obtain SeDebugPrivilege Not all privileges or groups referenced are assigned to the caller.
+(1300)
+23.03.2017 10:28:07 3948 CreateProcess
+23.03.2017 10:28:08 3948 Call ScSuspended for all active Plugins
+23.03.2017 10:28:08 3948 ApplyPatchSuspended for BWAPI 4.1.2 Injector [RELEASE]
+23.03.2017 10:28:08 3948 ApplyPatchSuspended for W-MODE 1.02
+23.03.2017 10:28:08 3948 ResumeThread
+23.03.2017 10:28:08 3948 WaitForInputIdle
+23.03.2017 10:28:08 3948 Call ScWindowCreated for all active Plugins
+23.03.2017 10:28:08 3948 ApplyPatch for BWAPI 4.1.2 Injector [RELEASE]
+23.03.2017 10:28:08 3948 ApplyPatch for W-MODE 1.02
+23.03.2017 10:28:08 3948 Starting Starcraft completed

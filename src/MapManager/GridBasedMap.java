@@ -22,7 +22,7 @@ public class GridBasedMap {
 
     public static final double DAMAGE_MODIFIER = 0.3;
 
-    public static final boolean SHOW_GRIDINPOTENTIALFIELD = true;
+    public static final boolean SHOW_GRIDINPOTENTIALFIELD = false;
 
 
     private Game game;
@@ -233,9 +233,9 @@ public class GridBasedMap {
         //System.out.println("Ground DMG = "+blockMap[row][col].isGroundDamage());
 
         if (pf.getUnitType().groundWeapon().maxRange() > 30 || pf.getUnitType().airWeapon().maxRange() > 30) {
-            blok.setValue(blok.getValue() + DAMAGE_MODIFIER * pf.getUnitType().groundWeapon().damageAmount());
+            blok.setValue(0.5*(blok.getValue() + DAMAGE_MODIFIER * pf.getUnitType().groundWeapon().damageAmount()));
         } else {
-            blok.setValue(blok.getValue() + DAMAGE_MODIFIER * (pf.getRangeLengthInPercent(blok.getPosition()) * (pf.getUnitType().groundWeapon().damageAmount())));
+            blok.setValue(0.5*(blok.getValue() + DAMAGE_MODIFIER * (pf.getRangeLengthInPercent(blok.getPosition()) * (pf.getUnitType().groundWeapon().damageAmount()))));
         }
     }
 
@@ -887,10 +887,12 @@ public class GridBasedMap {
     /* ------------------- Drawing methods ------------------- */
 
     public void drawDangerGrid(Color color, Game pGame) {
-        for (int i = 0; i < rows; i++) {
-            for (int j = 0; j < columns; j++) {
-                if (blockMap[i][j].isShowInGame()) {
-                    blockMap[i][j].drawBlock(color, pGame);
+        if(GridBasedMap.SHOW_GRIDINPOTENTIALFIELD) {
+            for (int i = 0; i < rows; i++) {
+                for (int j = 0; j < columns; j++) {
+                    if (blockMap[i][j].isShowInGame()) {
+                        blockMap[i][j].drawBlock(color, pGame);
+                    }
                 }
             }
         }

@@ -44,7 +44,7 @@ public class Bot extends DefaultBWListener {
         scout.onStart();
         consoleHandler=new ConsoleHandler(scout,scout.getMapManager());
 
-        game.setLocalSpeed(15);
+        game.setLocalSpeed(25);
         game.enableFlag(1);
 
 
@@ -88,7 +88,9 @@ public class Bot extends DefaultBWListener {
     @Override
     public void onUnitDiscover(Unit unit) {
         super.onUnitDiscover(unit);
-    }
+
+        scout.getUnitManager().manageDetection(unit,scout.getMapManager());
+}
 
     @Override
     public void onUnitEvade(Unit unit) {
