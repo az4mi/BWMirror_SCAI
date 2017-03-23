@@ -53,9 +53,9 @@ public class QLearning {
         System.out.println(":: Initializing actions ::");
         actions = new Action[]
                 {
-                    new SafeAction(),
-                    new NormalAction(),
-                    new RiskAction()
+                        new SafeAction(),
+                        new NormalAction(),
+                        new RiskAction()
                 };
     }
 
@@ -151,7 +151,7 @@ public class QLearning {
         qMatrix[currentStateIndex][actionIndex] = value;
     }
 
-       public double[][] getQMatrix() {
+    public double[][] getQMatrix() {
         return qMatrix;
     }
 

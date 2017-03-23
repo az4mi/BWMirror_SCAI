@@ -44,7 +44,7 @@ public class Bot extends DefaultBWListener {
         scout.onStart();
         consoleHandler=new ConsoleHandler(scout,scout.getMapManager());
 
-        game.setLocalSpeed(30);
+        game.setLocalSpeed(15);
         game.enableFlag(1);
 
 
